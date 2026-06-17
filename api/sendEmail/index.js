@@ -1,10 +1,11 @@
 const Mailjet = require('node-mailjet');
 
-// NOTE: Temporary defaults are hardcoded here for quick testing. Replace with secure env vars in production.
-const MAILJET_API_KEY = process.env.MAILJET_API_KEY || process.env.MJ_APIKEY_PUBLIC || process.env.MJ_APIKEY || 'ae058196ea6e933e6ffbc04e79d43070';
-const MAILJET_API_SECRET = process.env.MAILJET_API_SECRET || process.env.MJ_APIKEY_PRIVATE || process.env.MJ_APISECRET || '076fcf2d93396db87b01d5c3611f1c0b';
-const TO_EMAIL = process.env.TO_EMAIL || 'bijumatprof@gmail.com';
-const FROM_EMAIL = process.env.FROM_EMAIL || 'bijumatprof@gmail.com';
+// All secrets MUST be provided via environment variables (e.g. Azure App Settings).
+// Never hardcode API keys or secrets in source code.
+const MAILJET_API_KEY = process.env.MAILJET_API_KEY || process.env.MJ_APIKEY_PUBLIC || process.env.MJ_APIKEY || '';
+const MAILJET_API_SECRET = process.env.MAILJET_API_SECRET || process.env.MJ_APIKEY_PRIVATE || process.env.MJ_APISECRET || '';
+const TO_EMAIL = process.env.TO_EMAIL || '';
+const FROM_EMAIL = process.env.FROM_EMAIL || '';
 const FROM_NAME = process.env.FROM_NAME || 'Virtuous IT Solutions';
 const CORS_ALLOWED = process.env.CORS_ALLOWED || '*';
 
@@ -19,7 +20,6 @@ function addCors(res){
 
 module.exports = async function (context, req) {
   context.log('sendEmail (Mailjet) function received a request');
-  context.log('Warning: using hardcoded Mailjet credentials for testing; move keys to environment variables for production');
 
   // Handle CORS preflight
   if (req.method === 'OPTIONS'){
@@ -32,6 +32,15 @@ module.exports = async function (context, req) {
     context.res = addCors({
       status: 500,
       body: { error: 'Email provider (Mailjet) not configured' }
+    });
+    return;
+  }
+
+  if (!TO_EMAIL || !FROM_EMAIL) {
+    context.log.error('TO_EMAIL or FROM_EMAIL not configured in environment variables');
+    context.res = addCors({
+      status: 500,
+      body: { error: 'Email recipient/sender not configured' }
     });
     return;
   }

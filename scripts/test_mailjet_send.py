@@ -15,10 +15,14 @@ KEY = vals.get('MAILJET_API_KEY')
 SECRET = vals.get('MAILJET_API_SECRET')
 FROM_EMAIL = vals.get('FROM_EMAIL') or 'no-reply@yourdomain.com'
 FROM_NAME = vals.get('FROM_NAME') or 'Virtuous IT'
-TO_EMAIL = vals.get('TO_EMAIL') or 'bijumatprof@gmail.com'
+TO_EMAIL = vals.get('TO_EMAIL') or ''
 
 if not KEY or not SECRET:
     print('Mailjet API key/secret not configured in', cfg_path)
+    sys.exit(2)
+
+if not TO_EMAIL:
+    print('TO_EMAIL not configured in', cfg_path)
     sys.exit(2)
 
 subject = 'Test message from Virtuous IT site'

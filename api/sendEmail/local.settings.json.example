@@ -5,8 +5,8 @@
     "FUNCTIONS_WORKER_RUNTIME": "node",
     "MAILJET_API_KEY": "<your-mailjet-api-key-public>",
     "MAILJET_API_SECRET": "<your-mailjet-api-secret>",
-    "FROM_EMAIL": "bijumatprof@gmail.com",
+    "FROM_EMAIL": "<your-verified-sender-email>",
     "FROM_NAME": "Virtuous IT",
-    "TO_EMAIL": "bijumatprof@gmail.com"
+    "TO_EMAIL": "<your-recipient-email>"
   }
 }

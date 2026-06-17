@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Environment & secrets - NEVER commit these
+.env
+.env.*
+*.env
+local.settings.json
+api/**/local.settings.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
