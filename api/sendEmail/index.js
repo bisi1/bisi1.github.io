@@ -9,6 +9,16 @@ const FROM_EMAIL = process.env.FROM_EMAIL || '';
 const FROM_NAME = process.env.FROM_NAME || 'Virtuous IT Solutions';
 const CORS_ALLOWED = process.env.CORS_ALLOWED || '*';
 
+function escapeHtml(value = '') {
+  return String(value).replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  }[character]));
+}
+
 function addCors(res){
   res.headers = Object.assign(res.headers || {}, {
     'Access-Control-Allow-Origin': CORS_ALLOWED,
@@ -55,6 +65,19 @@ module.exports = async function (context, req) {
     return;
   }
 
+  const safeName = String(name || '').trim().slice(0, 120);
+  const safeEmail = String(email).trim().slice(0, 254);
+  const safeMessage = String(message).trim().slice(0, 10000);
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailPattern.test(safeEmail) || !safeMessage) {
+    context.res = addCors({
+      status: 400,
+      body: { error: 'Please provide a valid email address and message' }
+    });
+    return;
+  }
+
   // Warn if using a generic default FROM_EMAIL (may be rejected by Mailjet)
   if (FROM_EMAIL === 'no-reply@virtuousit.com') {
     context.log.warn('Using default FROM_EMAIL; consider setting a verified sender in environment settings (FROM_EMAIL)');
@@ -62,9 +85,9 @@ module.exports = async function (context, req) {
 
   const mailjet = Mailjet.connect(MAILJET_API_KEY, MAILJET_API_SECRET);
 
-  const subject = `Website contact from ${name || 'website visitor'}`;
-  const text = `Name: ${name || ''}\nEmail: ${email}\n\n${message}`;
-  const html = `<p><strong>Name:</strong> ${name || ''}</p><p><strong>Email:</strong> ${email}</p><hr/><p>${(message || '').replace(/\n/g, '<br/>')}</p>`;
+  const subject = `Website contact from ${safeName || 'website visitor'}`;
+  const text = `Name: ${safeName}\nEmail: ${safeEmail}\n\n${safeMessage}`;
+  const html = `<p><strong>Name:</strong> ${escapeHtml(safeName)}</p><p><strong>Email:</strong> ${escapeHtml(safeEmail)}</p><hr/><p>${escapeHtml(safeMessage).replace(/\n/g, '<br>')}</p>`;
 
   const requestBody = {
     Messages: [
@@ -74,7 +97,7 @@ module.exports = async function (context, req) {
         Subject: subject,
         TextPart: text,
         HTMLPart: html,
-        ReplyTo: { Email: email, Name: name || 'Website visitor' }
+        ReplyTo: { Email: safeEmail, Name: safeName || 'Website visitor' }
       }
     ]
   };
