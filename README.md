@@ -1,1 +1,1 @@
-Virtuous IT Solutions LTD
+Virtuous IT Solutions
