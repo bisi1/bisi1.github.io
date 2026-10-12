@@ -8,8 +8,8 @@ Setup
 2. Set the following Application Settings in your Function App (or local.settings.json for local testing):
    - MAILJET_API_KEY: your Mailjet API key
    - MAILJET_API_SECRET: your Mailjet API secret
-   - FROM_EMAIL: email address to appear as the sender (e.g. bijumatprof@gmail.com) — must be a verified sender in Mailjet
-   - TO_EMAIL: recipient address (defaults to bijumatprof@gmail.com)
+   - FROM_EMAIL: verified sender address used by Mailjet
+   - TO_EMAIL: private recipient address for website enquiries
 
 Local testing
 

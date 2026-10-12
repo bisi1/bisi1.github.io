@@ -4,7 +4,7 @@ const Mailjet = require('node-mailjet');
 // Never hardcode API keys or secrets in source code.
 const MAILJET_API_KEY = process.env.MAILJET_API_KEY || process.env.MJ_APIKEY_PUBLIC || process.env.MJ_APIKEY || '';
 const MAILJET_API_SECRET = process.env.MAILJET_API_SECRET || process.env.MJ_APIKEY_PRIVATE || process.env.MJ_APISECRET || '';
-const TO_EMAIL = process.env.TO_EMAIL || 'bijumatprof@gmail.com';
+const TO_EMAIL = process.env.TO_EMAIL;
 const FROM_EMAIL = process.env.FROM_EMAIL || '';
 const FROM_NAME = process.env.FROM_NAME || 'Virtuous IT Solutions';
 const CORS_ALLOWED = process.env.CORS_ALLOWED || '*';
@@ -51,6 +51,15 @@ module.exports = async function (context, req) {
     context.res = addCors({
       status: 500,
       body: { error: 'Email sender not configured' }
+    });
+    return;
+  }
+
+  if (!TO_EMAIL) {
+    context.log.error('TO_EMAIL not configured in environment variables');
+    context.res = addCors({
+      status: 500,
+      body: { error: 'Email recipient not configured' }
     });
     return;
   }
